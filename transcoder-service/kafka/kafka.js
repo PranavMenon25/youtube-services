@@ -17,6 +17,7 @@ class KafkaConfig{
             }
         })
         this.producer = this.Kafka.producer();
+        this.consumer = this.Kafka.consumer({groupId: "youtube-upload-service-consumer"});
     }
 
     async produce(topic, message){
@@ -37,8 +38,6 @@ class KafkaConfig{
 
     async consume(topic, callback){
         try{
-            const groupId = process.env.KAFKA_CONSUMER_GROUP_ID || "youtube-upload-service-consumer";
-            this.consumer = this.Kafka.consumer({ groupId });
             await this.consumer.connect();
             console.log("Kafka consumer connected");
             await this.consumer.subscribe({topic: topic, fromBeginning: true});
@@ -50,10 +49,6 @@ class KafkaConfig{
             });
         } catch(e){
             console.error("Error consuming message from Kafka:", e);
-        } finally{
-            if (this.consumer) {
-                await this.consumer.disconnect();
-            }
         }
     }
 }

@@ -1,5 +1,6 @@
 import express from 'express';
 import uploadRouter from './Routes/upload.route.js';
+import kafkapublishRouter from './Routes/kafkapublisher.route.js';
 import cors from 'cors';
 import dotenv from 'dotenv';
 
@@ -15,6 +16,7 @@ app.use(cors({
 
 app.use(express.json());
 app.use('/upload', uploadRouter);
+app.use('/publish', kafkapublishRouter);
 
 app.get('/', (req, res) => {
   res.send('Upload service is running');
