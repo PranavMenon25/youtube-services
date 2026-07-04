@@ -2,14 +2,15 @@ import { S3Client, PutObjectCommand } from '@aws-sdk/client-s3';
 import fs from 'fs';
 
 const uploadFileTOS3 = async (req, res) => {
-    const filePath = "D:/youtube-project/upload-service/demo-content/Ava's story.png";
-    if (!fs.existsSync(filePath)) {
-        console.log('File does not exist:', filePath);
-        return res.status(404).send('File does not exist');
+    console.log("Upload request received");
+    if (!req.file) {
+        return res.status(400).send('No file uploaded');
     }
 
+    const file = req.file;
+
     const s3Client = new S3Client({
-        region: 'eu-north-1',
+        region: process.env.AWS_REGION,
         credentials: {
             accessKeyId: process.env.AWS_ACCESS_KEY_ID,
             secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
@@ -18,8 +19,8 @@ const uploadFileTOS3 = async (req, res) => {
 
     const params = {
         Bucket: process.env.AWS_BUCKET_NAME,
-        Key: "Ava's story.png",
-        Body: fs.createReadStream(filePath),
+        Key: file.originalname,
+        Body: file.buffer,
     };
 
     try {
